@@ -599,7 +599,7 @@
     document.getElementById('submit-btn').disabled = true;
 
     try {
-      const WEBHOOK_URL = 'http://localhost:3000/intake';
+      const WEBHOOK_URL = '/intake';
 
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
