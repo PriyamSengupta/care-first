@@ -50,10 +50,11 @@ A fictional multi-specialty clinic demo that lets a patient fill in a short inta
 
 ```
 care-first/
-├── carefirst-landing.html   # Patient intake form (frontend)
 ├── README.md
 └── server/
-    ├── index.js             # Express server — /intake route, OpenAI call, Make.com handoff
+    ├── public/
+    │   └── index.html       # Patient intake form — served at localhost:3000
+    ├── index.js             # Express server — serves UI, /intake route, OpenAI call, Make.com handoff
     ├── prompts.js           # System prompt + concern-specific instruction sets
     ├── package.json
     ├── .env                 # Your secrets (gitignored)
@@ -172,11 +173,7 @@ CareFirst server running on http://localhost:3000
 
 ### Step 2 — Open the form
 
-```bash
-open ../carefirst-landing.html
-```
-
-Or drag `carefirst-landing.html` into your browser.
+Visit [http://localhost:3000](http://localhost:3000) in your browser. The landing page is served directly by Express — no need to open any file manually.
 
 ### Step 3 — Submit the form
 
