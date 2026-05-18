@@ -62,4 +62,27 @@ ${instructionList}
 Write the full email body now.`;
 }
 
-module.exports = { buildSystemPrompt, buildUserPrompt };
+function buildSpamPrompt({ first_name, last_name, email, age, concern, slot, note }) {
+  return `You are a spam detection system for a medical clinic intake form. Analyze this submission and return a JSON object ONLY — no explanation, no markdown, just raw JSON.
+
+Submission:
+- First Name: ${first_name}
+- Last Name: ${last_name}
+- Email: ${email}
+- Age: ${age}
+- Concern: ${concern}
+- Slot: ${slot}
+- Note: ${note || '(none)'}
+
+Evaluate for spam signals such as: gibberish or random names, fake-looking email addresses, nonsensical or promotional note content, mismatched age/concern, repeated filler words, or bot-like patterns.
+
+Return exactly this JSON structure:
+{
+  "spam_score": <integer 0-100>,
+  "reason": "<one sentence explaining the score>"
+}
+
+0 = clearly legitimate, 100 = obvious spam.`;
+}
+
+module.exports = { buildSystemPrompt, buildUserPrompt, buildSpamPrompt };
