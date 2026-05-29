@@ -49,7 +49,10 @@ app.post('/intake', async (req, res) => {
     let spam_score = 0;
     let spam_reason = '';
     try {
-      const spamRaw = spamCompletion.choices[0].message.content.trim();
+      const spamRaw = spamCompletion.choices[0].message.content
+        .trim()
+        .replace(/^```(?:json)?\s*/i, '')
+        .replace(/\s*```$/, '');
       const spamResult = JSON.parse(spamRaw);
       spam_score = spamResult.spam_score ?? 0;
       spam_reason = spamResult.reason ?? '';
@@ -69,6 +72,8 @@ app.post('/intake', async (req, res) => {
       spam_reason,
       email_subject: `Your CareFirst Appointment is Confirmed, ${first_name}!`,
       email_body: emailBody,
+    }, {
+      headers: { 'x-make-apikey': process.env.MAKE_WEBHOOK_API_KEY },
     });
 
     res.json({ success: true });
