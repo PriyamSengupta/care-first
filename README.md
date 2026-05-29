@@ -23,9 +23,9 @@ A fictional multi-specialty clinic demo that lets a patient fill in a short inta
    - Scores the submission for spam (0–100)
 4. Server forwards the full payload (including spam score) to **Make.com**
 5. Make.com fans out to three branches simultaneously:
-   - Sends a confirmation email to the **patient** via Gmail
-   - Sends an admin notification email with the spam score to the **admin**
-   - Appends a row to a **Google Sheet** for tracking
+   - Sends a confirmation email to the **patient** via Gmail — only if spam score ≤ 60
+   - Sends an admin notification email with the spam score to the **admin** — always
+   - Appends a row to a **Google Sheet** for tracking — always
 
 ### Specialties supported
 
@@ -120,9 +120,9 @@ The Make.com scenario receives every intake submission and fans it out to three 
 Custom Webhook
       │
    Router
-   ├── 1st → Gmail → Patient confirmation email
-   ├── 2nd → Gmail → Admin notification + spam score
-   └── 3rd → Google Sheets → Append row with all fields
+   ├── 1st → [Filter: spam_score ≤ 60] → Gmail → Patient confirmation email
+   ├── 2nd → Gmail → Admin notification + spam score      (always runs)
+   └── 3rd → Google Sheets → Append row with all fields  (always runs)
 ```
 
 ![Make.com scenario flow](server/public/images/make-scenario-flow.png)
@@ -182,12 +182,20 @@ curl -X POST http://localhost:3000/intake \
 2. Search **Flow control** → select **Router**
 3. The Router creates parallel branches — you need 3
 
-#### Step 5 — Branch 1: Patient Confirmation Email (Gmail)
+#### Step 5 — Branch 1: Patient Confirmation Email (Gmail) + Spam Filter
 
 1. Click **+** on the **1st** branch
 2. Search **Gmail** → **Send an Email**
 3. Connect your Google account when prompted
 4. Map the fields:
+
+> **Important — add a filter so spam submissions never reach the patient inbox:**
+> - Click the dotted connector line between the Router and this Gmail module
+> - Select **Set up a filter**
+> - Condition: `spam_score` **Less than or equal to** `60`
+> - Label it `Legitimate only` → click **OK**
+>
+> With this filter active, only clean submissions (score ≤ 60) trigger the patient email. The admin email and Google Sheets branches always run regardless of the score.
 
 | Field | Value |
 |---|---|
